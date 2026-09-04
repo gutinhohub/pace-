@@ -26,7 +26,7 @@
       background-color: var(--bg-main);
       color: var(--text-main);
       font-family: var(--font-family);
-      padding-bottom: 80px; /* Espaço para a barra inferior no mobile */
+      padding-bottom: 80px;
     }
 
     /* --- TOPO / HEADER --- */
@@ -43,15 +43,27 @@
       border-bottom: 1px solid #1e293b;
     }
 
-    .user-profile {
+    /* LINK ENVOLVENDO O PERFIL */
+    .user-profile-link {
+      text-decoration: none;
+      color: inherit;
       display: flex;
       align-items: center;
       gap: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      transition: background-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .user-profile-link:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      transform: scale(1.02);
     }
 
     .avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), #00b894);
       display: flex;
@@ -59,6 +71,7 @@
       justify-content: center;
       font-weight: bold;
       color: var(--bg-main);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
     }
 
     .device-status {
@@ -90,7 +103,6 @@
       gap: 1.5rem;
     }
 
-    /* CARD DE DESTAQUE - ÚLTIMO TREINO */
     .hero-card {
       background: linear-gradient(135deg, #161f33 0%, #111827 100%);
       border-radius: 16px;
@@ -120,7 +132,6 @@
       font-weight: normal;
     }
 
-    /* ENQUADRAMENTO DE MÉTRICAS RÁPIDAS */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -151,7 +162,6 @@
       font-weight: bold;
     }
 
-    /* VISUALIZAÇÃO DA PISADA (PRESSÃO PLANTAR) */
     .pressure-section {
       background-color: var(--bg-card);
       border-radius: 16px;
@@ -180,7 +190,6 @@
       padding: 15px 0;
     }
 
-    /* Pontos de Pressão Plantar */
     .sensor-point {
       width: 25px;
       height: 25px;
@@ -221,7 +230,6 @@
       border-radius: 50%;
     }
 
-    /* BOTÃO DE AÇÃO - INICIAR TREINO */
     .action-area {
       display: flex;
       justify-content: center;
@@ -247,7 +255,6 @@
       transform: scale(0.98);
     }
 
-    /* BARRA DE NAVEGAÇÃO INFERIOR (MOBILE) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -278,20 +285,24 @@
 </head>
 <body>
 
+  <!-- CABEÇALHO COM LINK NO PERFIL -->
   <header>
-    <div class="user-profile">
+    <!-- Ao clicar no perfil/avatar, ele abre o arquivo PDF em uma nova aba -->
+    <a href="plano.pdf" target="_blank" class="user-profile-link" title="Clique para abrir o Plano de Negócios (PDF)">
       <div class="avatar">US</div>
       <div>
-        <div style="font-weight: bold; font-size: 0.95rem;">Olá, Atleta</div>
-        <div style="font-size: 0.75rem; color: var(--text-muted);">Plano PACE+ Pro</div>
+        <div style="font-weight: bold; font-size: 0.95rem;">Mariana Souza</div>
+        <div style="font-size: 0.75rem; color: var(--primary); font-weight: 500;">📄 Ver PDF do Plano</div>
       </div>
-    </div>
+    </a>
+
     <div class="device-status">
       <div class="dot-connected"></div>
       <span>Palmilha Conectada</span>
     </div>
   </header>
 
+  <!-- CONTEÚDO DO APP -->
   <main class="container">
 
     <div class="action-area">
@@ -382,9 +393,9 @@
       <span>🦶</span>
       <span>Pisada</span>
     </a>
-    <a href="#" class="nav-item">
-      <span>⚙️</span>
-      <span>Ajustes</span>
+    <a href="plano.pdf" target="_blank" class="nav-item">
+      <span>📄</span>
+      <span>Plano PDF</span>
     </a>
   </nav>
 
