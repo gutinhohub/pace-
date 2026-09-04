@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PACE+ App | Dashboard & Modelo 3D</title>
 
-  <!-- Biblioteca Three.js via CDN confiável para renderização 3D nativa -->
+  <!-- Canvas Three.js via CDN confiável -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
@@ -33,7 +33,7 @@
       padding-bottom: 80px;
     }
 
-    /* --- TOPO / HEADER --- */
+    /* --- HEADER --- */
     header {
       background-color: rgba(22, 31, 51, 0.8);
       backdrop-filter: blur(10px);
@@ -96,7 +96,7 @@
       box-shadow: 0 0 8px var(--primary);
     }
 
-    /* --- LAYOUT PRINCIPAL --- */
+    /* --- LAYOUT --- */
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -165,7 +165,7 @@
       font-weight: bold;
     }
 
-    /* --- CONTAINER 3D --- */
+    /* --- CANVAS 3D PALMILHA FECHADA --- */
     .model-3d-section {
       background-color: var(--bg-card);
       border-radius: 16px;
@@ -176,8 +176,8 @@
 
     #canvas-container {
       width: 100%;
-      height: 320px;
-      background-color: #0f172a;
+      height: 340px;
+      background-color: #080d1a;
       border-radius: 12px;
       margin-top: 1rem;
       position: relative;
@@ -348,10 +348,10 @@
       </div>
     </div>
 
-    <!-- SEÇÃO DO MODELO 3D DA PALMILHA PACE ONE -->
+    <!-- SEÇÃO 3D DA PALMILHA FECHADA -->
     <div class="model-3d-section">
-      <h3 style="font-size: 1.1rem; text-align: left;">Modelo 3D - Palmilha PACE+ One</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); text-align: left;">Visualização 3D interativa com sensores plantares ativos</p>
+      <h3 style="font-size: 1.1rem; text-align: left;">Modelo 3D Real - Palmilha PACE+ One</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); text-align: left;">Palmilha fechada com tela OLED e acabamento esportivo</p>
 
       <div id="canvas-container"></div>
 
@@ -404,73 +404,114 @@
     </a>
   </nav>
 
-  <!-- SCRIPT THREE.JS: CONSTRÓI A PALMILHA 3D INTERATIVA -->
+  <!-- RENDERIZADOR 3D DE PALMILHA FECHADA -->
   <script>
     const container = document.getElementById('canvas-container');
 
-    // Cenário, Câmera e Renderizador
+    // Configuração de Cena
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f172a);
+    scene.background = new THREE.Color(0x080d1a);
 
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 5, 8);
+    const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 5.5, 5);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Luzes
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // Iluminação
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0x00ff88, 1.2);
-    dirLight.position.set(5, 10, 7);
-    scene.add(dirLight);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    mainLight.position.set(3, 8, 5);
+    scene.add(mainLight);
 
-    // GRUPO DA PALMILHA 3D
+    const greenGlow = new THREE.PointLight(0x00ff88, 1.5, 3);
+    greenGlow.position.set(0, 0.5, 0.5);
+    scene.add(greenGlow);
+
     const insoleGroup = new THREE.Group();
 
-    // 1. Corpo Principal da Palmilha
+    // 1. Formato de Palmilha Anatômica Fechada
     const shape = new THREE.Shape();
-    shape.moveTo(-0.8, -2.2);
-    shape.bezierCurveTo(-1.1, -1.0, -1.2, 1.0, -0.9, 1.8);
-    shape.bezierCurveTo(-0.6, 2.5, 0.6, 2.5, 0.9, 1.8);
-    shape.bezierCurveTo(1.2, 1.0, 1.1, -1.0, 0.8, -2.2);
-    shape.bezierCurveTo(0.5, -2.7, -0.5, -2.7, -0.8, -2.2);
+    shape.moveTo(-0.7, -2.4);
+    shape.bezierCurveTo(-1.0, -1.2, -1.15, 0.6, -0.9, 1.8);
+    shape.bezierCurveTo(-0.7, 2.5, 0.7, 2.5, 0.9, 1.8);
+    shape.bezierCurveTo(1.15, 0.6, 1.0, -1.2, 0.7, -2.4);
+    shape.bezierCurveTo(0.4, -2.85, -0.4, -2.85, -0.7, -2.4);
 
-    const extrudeSettings = { depth: 0.15, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
+    const extrudeSettings = { depth: 0.18, bevelEnabled: true, bevelSegments: 4, steps: 1, bevelSize: 0.08, bevelThickness: 0.08 };
     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     geometry.rotateX(-Math.PI / 2);
 
-    const material = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.2 });
-    const insoleMesh = new THREE.Mesh(geometry, material);
-    insoleGroup.add(insoleMesh);
-
-    // 2. Sensores de Pressão Plantar (Pontos brilhantes verdes/vermelhos)
-    const sensorGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.05, 16);
-    
-    const sensorMatGreen = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
-    const sensorMatRed = new THREE.MeshBasicMaterial({ color: 0xff4757 });
-    const sensorMatYellow = new THREE.MeshBasicMaterial({ color: 0xffa502 });
-
-    const sensorPositions = [
-      { x: -0.4, z: -1.5, mat: sensorMatRed },      // Calcanhar
-      { x: 0.3, z: -1.5, mat: sensorMatYellow },
-      { x: -0.4, z: 1.2, mat: sensorMatGreen },     // Antepé
-      { x: 0.4, z: 1.2, mat: sensorMatRed },
-      { x: 0, z: 1.7, mat: sensorMatGreen }         // Dedos
-    ];
-
-    sensorPositions.forEach(pos => {
-      const sensor = new THREE.Mesh(sensorGeo, pos.mat);
-      sensor.position.set(pos.x, 0.1, pos.z);
-      insoleGroup.add(sensor);
+    // Material Emborrachado Escuro da Palmilha Fechada
+    const insoleMaterial = new THREE.MeshStandardMaterial({
+      color: 0x181a20,
+      roughness: 0.6,
+      metalness: 0.1
     });
 
+    const insoleMesh = new THREE.Mesh(geometry, insoleMaterial);
+    insoleGroup.add(insoleMesh);
+
+    // 2. Tela OLED Central Embutida
+    const displayFrameGeo = new THREE.BoxGeometry(0.75, 0.06, 0.75);
+    const displayFrameMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.2 });
+    const displayFrame = new THREE.Mesh(displayFrameGeo, displayFrameMat);
+    displayFrame.position.set(0, 0.22, 0.4);
+    insoleGroup.add(displayFrame);
+
+    // Canvas dinâmico para renderizar a interface OLED da palmilha
+    const screenCanvas = document.createElement('canvas');
+    screenCanvas.width = 256;
+    screenCanvas.height = 256;
+    const ctx = screenCanvas.getContext('2d');
+    
+    ctx.fillStyle = '#050a14';
+    ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('PASSOS', 128, 90);
+    ctx.fillStyle = '#00ff88';
+    ctx.font = 'bold 46px sans-serif';
+    ctx.fillText('7.842', 128, 150);
+    ctx.fillRect(48, 175, 160, 6);
+
+    const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    const screenGeo = new THREE.PlaneGeometry(0.65, 0.65);
+    screenGeo.rotateX(-Math.PI / 2);
+    const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture });
+    const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+    screenMesh.position.set(0, 0.26, 0.4);
+    insoleGroup.add(screenMesh);
+
+    // 3. Logotipo "PACE+" no Calcanhar
+    const logoCanvas = document.createElement('canvas');
+    logoCanvas.width = 256;
+    logoCanvas.height = 128;
+    const logoCtx = logoCanvas.getContext('2d');
+    logoCtx.fillStyle = '#00ff88';
+    logoCtx.font = 'bold 42px sans-serif';
+    logoCtx.textAlign = 'center';
+    logoCtx.fillText('PACE+', 128, 75);
+
+    const logoTexture = new THREE.CanvasTexture(logoCanvas);
+    const logoGeo = new THREE.PlaneGeometry(0.8, 0.4);
+    logoGeo.rotateX(-Math.PI / 2);
+    const logoMat = new THREE.MeshBasicMaterial({ map: logoTexture, transparent: true });
+    const logoMesh = new THREE.Mesh(logoGeo, logoMat);
+    logoMesh.position.set(0, 0.23, -1.6);
+    insoleGroup.add(logoMesh);
+
+    // Inclinação suave para estilo de apresentação
+    insoleGroup.rotation.x = 0.3;
     scene.add(insoleGroup);
 
-    // INTERAÇÃO COM MOUSE/TOQUE PARA GIRAR O MODELO
+    // Controle de Rotação 360°
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
 
@@ -491,7 +532,7 @@
       previousMousePosition = { x: e.clientX, y: e.clientY };
     });
 
-    // Touch events para celular
+    // Eventos para Dispositivos Móveis
     container.addEventListener('touchstart', (e) => {
       isDragging = true;
       previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -509,17 +550,17 @@
       previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     });
 
-    // Animação/Render Loop
+    // Animação de Rotação
     function animate() {
       requestAnimationFrame(animate);
       if (!isDragging) {
-        insoleGroup.rotation.y += 0.005; // Rotação automática suave
+        insoleGroup.rotation.y += 0.006;
       }
       renderer.render(scene, camera);
     }
     animate();
 
-    // Ajuste em redesimensionamento de tela
+    // Responsividade
     window.addEventListener('resize', () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
